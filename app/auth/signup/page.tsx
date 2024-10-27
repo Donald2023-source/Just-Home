@@ -23,12 +23,12 @@ const page = () => {
         <form className='absolute top-[30%] text-lg font-light flex flex-col gap-10 items-center w-full h-fit left-0 right-0'>
           <Image src={logo} alt='' />
 
-            <fieldset className='flex flex-col lg:w-[30%] w-full px-4 text-white'>
+            <fieldset className='flex flex-col lg:w-[30%] w-full px-6 text-white'>
                 <label className='text-gray-300'>Email</label>
                 <input className='py-3 px-5 rounded-lg outline-none  bg-black/60' type="email" />
             </fieldset>
 
-            <fieldset className='flex flex-col lg:w-[30%] px-4 w-full text-white'>
+            <fieldset className='flex flex-col lg:w-[30%] px-6 w-full text-white'>
                 <label className='text-gray-300'>Password</label>
                 <span className='flex items-center bg-black/60 rounded-lg'>
                   <input className='py-3 bg-transparent px-5 outline-none w-[80%]' type={view ? 'text': 'password'} />
