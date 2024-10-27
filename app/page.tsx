@@ -35,14 +35,14 @@ const Page = () => {
                 </motion.div>
             ))}
 
-            <div className="absolute inset-0 w-full h-full bg-black/60" />
+            <div className="absolute inset-0 backdrop-blur-sm w-full h-full bg-black/60" />
 
             <div className='absolute top-[40%] flex flex-col items-center mx-auto w-full left-0 right-0'>
                 <h2 className='text-white text-4xl text-center'>Just Home</h2>
                 <p className='text-center text-lg text-white py-3'>Just Home's got you covered</p>
                 <div className='flex justify-center gap-10 py-4'>
-                    <Link href={'/home'} className='py-3 px-5 text-black bg-[#E7C873] rounded-xl hover:scale-105 transition duration-300'>Read About Us</Link>
-                    <Link href={'/auth/signup'} className='py-3 px-5 text-black bg-[#E7C873] rounded-xl hover:scale-105 transition duration-300'>Sign Up</Link>
+                    <Link href={'/home'} className='py-3 px-5 text-gray-300 bg-primary rounded-xl hover:scale-105 transition duration-300'>Read About Us</Link>
+                    <Link href={'/auth/signup'} className='py-3 px-5 bg-primary text-gray-300 rounded-xl hover:scale-105 transition duration-300'>Sign Up</Link>
                 </div>
             </div>
         </div>
