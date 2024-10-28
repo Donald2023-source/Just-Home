@@ -9,7 +9,7 @@ export default function RootLayout({
             <div className="w-1/5 border">
                 <Sidebar />
             </div>
-            <main className="flex-1">
+            <main className="flex-1 p-3">
                 {children}
             </main>
         </div>
