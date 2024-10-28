@@ -1,11 +1,11 @@
 import React from 'react'
 
-const Page = () => {
+const page = () => {
   return (
     <div>
-        
+      Dash
     </div>
   )
 }
 
-export default Page
+export default page
