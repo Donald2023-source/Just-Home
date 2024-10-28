@@ -9,7 +9,7 @@ export default function RootLayout({
             <div className="w-1/4 border">
                 <Sidebar />
             </div>
-            <main className="flex-1"> {/* Keeps `flex-1` to fill remaining space */}
+            <main className="flex-1">
                 {children}
             </main>
         </div>
