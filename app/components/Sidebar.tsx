@@ -6,6 +6,7 @@ import { RiDashboardFill } from "react-icons/ri";
 import { BsHousesFill } from "react-icons/bs";
 import { MdOutlineExplore, MdSettings } from "react-icons/md";
 import Link from 'next/link';
+import { GiSelfLove } from "react-icons/gi";
 import { usePathname } from 'next/navigation';
 
 const Sidebar = () => {
@@ -14,6 +15,7 @@ const Sidebar = () => {
         { name: 'Properties', icon: <BsHousesFill />, href: '/Dashboard/Properties' },
         { name: 'Explore', icon: <MdOutlineExplore />, href: '/Dashboard/explore' },
         { name: 'Settings', icon: <MdSettings />, href: '/Dashboard/settings' },
+        { name: 'Favourite', icon: <GiSelfLove />, href: '/Dashboard/favorite' },
     ];
 
     const pathName = usePathname();
