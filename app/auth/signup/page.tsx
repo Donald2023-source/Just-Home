@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, FormEvent } from 'react';
+import React, { useState, FormEvent, useEffect } from 'react';
 import img1 from '@/Assets/pexels-expect-best-79873-323776.jpg';
 import logo from '@/Assets/logo-white.svg.png';
 import Image from 'next/image';
@@ -8,12 +8,15 @@ import Link from 'next/link';
 import { useAuthStore } from '@/app/store/authStore';
 import { toast, ToastOptions } from 'react-toastify';
 import ToastNotification from '@/app/components/ToastNotification';
+import { useRouter } from 'next/navigation';
 
-const page = () => {
+const SignUpPage = () => {
+    const router = useRouter();
     const [view, setView] = useState(false);
     const handleClick = () => setView(!view);
     
     const signup = useAuthStore((state) => state.signup);
+    const { isAuthenticated } = useAuthStore();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
@@ -66,6 +69,13 @@ const page = () => {
       }
     };
     
+    
+
+    useEffect(() => {
+      if (isAuthenticated) {
+          router.push('/Dashboard');
+      }
+    }, [isAuthenticated, router]);
 
     return (
       <div className='relative h-screen w-screen'>
@@ -107,4 +117,4 @@ const page = () => {
     );
 };
 
-export default page;
+export default SignUpPage;

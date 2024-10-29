@@ -1,22 +1,22 @@
 import { create } from 'zustand';
-import { auth } from '@/firebaseConfig'
+import { auth } from '@/firebaseConfig';
 import { createUserWithEmailAndPassword, updateProfile, signOut, onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
 
 type AuthState = {
     user: any;
     isAuthenticated: boolean;
-    signup: (email: string, password: string, displayName: string) => Promise <void>
+    signup: (email: string, password: string, displayName: string) => Promise<void>;
     login: (email: string, password: string) => Promise<void>;
-    logout: () => Promise <void>;
+    logout: () => Promise<void>;
 };
 
 export const useAuthStore = create<AuthState>((set) => {
-    //Listen for auth CHnages
+    // Listen for auth changes
     onAuthStateChanged(auth, (firebaseUser) => {
-        if(firebaseUser) {
-            set({ user: firebaseUser, isAuthenticated: true});
+        if (firebaseUser) {
+            set({ user: firebaseUser, isAuthenticated: true });
         } else {
-            set({ user: null, isAuthenticated: false})
+            set({ user: null, isAuthenticated: false });
         }
     });
 
@@ -28,7 +28,7 @@ export const useAuthStore = create<AuthState>((set) => {
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 await updateProfile(userCredential.user, { displayName });
-                set({ user: userCredential.user, isAuthenticated: true})
+                set({ user: userCredential.user, isAuthenticated: true });
             } catch (error) {
                 console.error('Sign Up Failed', error);
             }
@@ -36,19 +36,19 @@ export const useAuthStore = create<AuthState>((set) => {
 
         login: async (email, password) => {
             try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password)
-                set({ user: userCredential.user, isAuthenticated: false})
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                set({ user: userCredential.user, isAuthenticated: true });  // Set to true after login
             } catch (error) {
-                console.error('login Failed:', error)
+                console.error('Login Failed:', error);
             }
         },
 
         logout: async () => {
             try {
                 await signOut(auth);
-                set({ user: null, isAuthenticated: false})
+                set({ user: null, isAuthenticated: false });
             } catch (error) {
-                console.error('Logout failed', error)
+                console.error('Logout Failed:', error);
             }
         },
     };

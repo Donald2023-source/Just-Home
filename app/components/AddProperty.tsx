@@ -2,6 +2,8 @@
 import Image from 'next/image'
 import React, { FormEvent, useState } from 'react'
 import logo from '@/Assets/logo-white.svg.png'
+import { usePropertyStore } from '../store/addProperty';
+import { ToastOptions, toast } from 'react-toastify';
 
 const AddProperty = ({ close }: any) => {
   const [formData, setFormData] = useState({
@@ -14,6 +16,16 @@ const AddProperty = ({ close }: any) => {
     squareFeet: '',
     description: '',
   });
+
+  const toastOptions: ToastOptions = {
+    position: 'top-right',
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    theme: 'colored',
+  };
   const [images, setImages] = useState<File[]>([]);
 
   const handleInputChange = (e: FormEvent) => {
@@ -32,12 +44,31 @@ const AddProperty = ({ close }: any) => {
       setImages(selectedFiles);
     }
   };
-  
+
+  const { addProperty, uploading, error, isLoading } = usePropertyStore();
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    const { propertyName, location, propertyType, price, bedrooms, bathrooms, squareFeet, description } = formData;
+
+    if (images.length < 5) {
+      toast.error('Must be at least 5 images', toastOptions);
+      return;
+    }
+
+    await addProperty(
+      { propertyName, location, propertyType, price, bedrooms, bathrooms, squareFeet, description }, images,
+    
+    );
+
+    if (!error) close();
+  };
 
   return (
     <div className="w-full text-gray-200 relative">
       <div className="w-full">
-        <form className="max-w-lg w-full shadow-2xl shadow-slate-800 rounded-2xl mx-auto py-3 px-10 flex flex-col gap-4 items-center" action="">
+        <form className="max-w-lg w-full shadow-2xl shadow-slate-800 rounded-2xl mx-auto py-3 px-10 flex flex-col gap-4 items-center" onSubmit={handleSubmit}>
           <Image src={logo} alt="Logo" />
           <h4>Please enter the property details below</h4>
 
@@ -166,7 +197,8 @@ const AddProperty = ({ close }: any) => {
             </div>
           </fieldset>
 
-          <button type="submit" className="py-2 px-5  bg-primary rounded-lg">Submit</button>
+          {/* Submit Button */}
+          <button type="submit" className="py-2 px-5 bg-primary rounded-lg">{isLoading ? 'uploading' : 'submit'}</button>
         </form>
 
         <h4

@@ -1,10 +1,10 @@
-import { create } from 'zustand'
-import { getFirestore, collection, addDoc } from 'firebase/firestore'
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-import { app } from '@/firebaseConfig'
+import { create } from 'zustand';
+import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { app } from '@/firebaseConfig';
 
 const db = getFirestore(app);
-const storage = getStorage(app)
+const storage = getStorage(app);
 
 interface Property {
     propertyName: string;
@@ -20,39 +20,39 @@ interface Property {
 
 interface PropertyStore {
     uploading: boolean;
+    isLoading: boolean;
     error: string | null;
     addProperty: (property: Omit<Property, 'images'>, images: File[]) => Promise<void>;
-
 }
 
 export const usePropertyStore = create<PropertyStore>((set) => ({
-    uploading: false, 
+    uploading: false,
+    isLoading: false,
     error: null,
 
     addProperty: async (propertyData, images) => {
-        set({ uploading: true, error: null});
+        set({ uploading: true, isLoading: true, error: null });
 
         try {
-            //uploading images to firebase storage;
-
-            const imageURls = await Promise.all(
+            // Upload images to Firebase Storage
+            const imageUrls = await Promise.all(
                 images.map(async (image) => {
                     const imageRef = ref(storage, `properties/${Date.now()} - ${image.name}`);
                     await uploadBytes(imageRef, image);
-                    return await getDownloadURL(imageRef)
+                    return await getDownloadURL(imageRef);
                 })
             );
 
-            //save property data to firestore
-            const propertyWithImages = { ...propertyData, images: imageURls};
+            // Save property data to Firestore
+            const propertyWithImages = { ...propertyData, images: imageUrls };
             await addDoc(collection(db, 'properties'), propertyWithImages);
 
-            set({ uploading: false});
+            set({ uploading: false, isLoading: false });
             alert('Property uploaded successfully');
-        } catch(error) {
-            set( { uploading: false});
+        } catch (error) {
+            set({ uploading: false, isLoading: false, error: 'Failed to upload property' });
             console.error('Error uploading property', error);
-            alert('Failed to upload property')
+            alert('Failed to upload property');
         }
     }
-}))
+}));
