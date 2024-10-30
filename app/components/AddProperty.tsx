@@ -1,20 +1,28 @@
 'use client'
 import Image from 'next/image'
-import React, { FormEvent, useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 import logo from '@/Assets/logo-white.svg.png'
 import { usePropertyStore } from '../store/addProperty';
 import { ToastOptions, toast } from 'react-toastify';
+import { TailSpin } from 'react-loader-spinner'; // Import loader
+import { getFirestore, collection, addDoc, getDocs, doc, getDoc } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { app } from '@/firebaseConfig';
+import { v4 as uuidv4 } from 'uuid';
+
+const db = getFirestore(app);
+const storage = getStorage(app)
 
 const AddProperty = ({ close }: any) => {
   const [formData, setFormData] = useState({
     propertyName: '',
-    location: '',
     propertyType: '',
+    location: '',
     price: '',
     bedrooms: '',
     bathrooms: '',
     squareFeet: '',
-    description: '',
+    description: ''
   });
 
   const toastOptions: ToastOptions = {
@@ -26,17 +34,19 @@ const AddProperty = ({ close }: any) => {
     draggable: true,
     theme: 'colored',
   };
+
   const [images, setImages] = useState<File[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e: FormEvent) => {
     const { name, value } = e.target as HTMLInputElement;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
-  };
+    setFormData((prevData => ({ ...prevData, [name]: value})))
+  }
 
   const handleImageChange = (e: FormEvent) => {
     const files = (e.target as HTMLInputElement).files;
     if (files) {
-      const selectedFiles = Array.from(files).slice(0, 10); // Limit to 10 images
+      const selectedFiles = Array.from(files).slice(0, 10);
       if (selectedFiles.length < 5) {
         alert("Please select at least 5 images.");
         return;
@@ -45,25 +55,44 @@ const AddProperty = ({ close }: any) => {
     }
   };
 
-  const { addProperty, uploading, error, isLoading } = usePropertyStore();
-
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async(e: FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
 
     const { propertyName, location, propertyType, price, bedrooms, bathrooms, squareFeet, description } = formData;
 
-    if (images.length < 5) {
-      toast.error('Must be at least 5 images', toastOptions);
-      return;
+    if(images.length < 5) {
+      toast.error('Must be at least 5 images');
+      setIsLoading(false);
+      return ;
     }
 
-    await addProperty(
-      { propertyName, location, propertyType, price, bedrooms, bathrooms, squareFeet, description }, images,
-    
-    );
+    try {
+      const uniqueId = uuidv4();
+      const folderName = `${propertyName}-${uniqueId}}`;
 
-    if (!error) close();
-  };
+
+      const imageUrls = await Promise.all(
+        images.map(async (image) => {
+          const imageRef = ref(storage, `properties/${folderName}/${image.name}`)
+          await uploadBytes(imageRef, image);
+          return await getDownloadURL(imageRef)
+        })
+      );
+
+      const propertyWithImages = { ...formData, images: imageUrls };
+      await addDoc(collection(db, 'properties'), propertyWithImages);
+
+      toast.success('Property added successfully');
+      close();
+    } catch(error) {
+      toast.error('Failed to add property. Please try again.');
+      console.error('Error uploaded property:', error);
+      setIsLoading(false)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <div className="w-full text-gray-200 relative">
@@ -198,7 +227,13 @@ const AddProperty = ({ close }: any) => {
           </fieldset>
 
           {/* Submit Button */}
-          <button type="submit" className="py-2 px-5 bg-primary rounded-lg">{isLoading ? 'uploading' : 'submit'}</button>
+          <button type="submit" className="py-2 px-5 bg-primary rounded-lg">
+            {isLoading ? (
+              <TailSpin color="#FFFFFF" height={20} width={20} />
+            ) : (
+              'Submit'
+            )}
+          </button>
         </form>
 
         <h4

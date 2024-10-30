@@ -1,11 +1,11 @@
 import React from 'react'
 
-const Properties = () => {
+const Page = () => {
   return (
     <div>
-      sf
+      sd
     </div>
   )
 }
 
-export default Properties
+export default Page

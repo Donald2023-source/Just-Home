@@ -12,7 +12,7 @@ import { usePathname } from 'next/navigation';
 const Sidebar = () => {
     const links = [
         { name: 'Dashboard', icon: <RiDashboardFill />, href: '/Dashboard' },
-        { name: 'Properties', icon: <BsHousesFill />, href: '/Dashboard/Properties' },
+        { name: 'Properties', icon: <BsHousesFill />, href: '/Properties' },
         { name: 'Explore', icon: <MdOutlineExplore />, href: '/Dashboard/explore' },
         { name: 'Settings', icon: <MdSettings />, href: '/Dashboard/settings' },
         { name: 'Favourite', icon: <GiSelfLove />, href: '/Dashboard/favorite' },
